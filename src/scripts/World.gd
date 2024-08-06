@@ -4,37 +4,47 @@ const CHUNK := preload("res://scenes/Chunk.tscn")
 const CHUNK_SIZE := 8
 const SQUARE_SIZE := 16
 
-export var height := 64
-export var width := 64
+@export var height := 64
+@export var width := 64
 var v_chunks: int = ceil(float(height) / float(CHUNK_SIZE))
 var h_chunks: int = ceil(float(width) / float(CHUNK_SIZE))
 var chunks := []
 var altered_chunks := {}
 #FIX NOISE- AIR SHOULD ALWAYS BE ZERO, ROCK SHOULD ALWAYS BE 1 INSIDE
 
+
 func _ready() -> void:
 	get_tree().debug_collisions_hint = true
 	randomize()
 	generate_world(_get_noise(randi()))
 
+
 func _process(delta_time: float) -> void:
-	if(Input.is_action_just_pressed("debug_mouse")):
-		get_child(1).position = get_global_mouse_position()
-		var pos = (get_global_mouse_position() / SQUARE_SIZE).round()
+	if(Input.is_action_pressed("debug_mouse")):
+		# Add chunks
+		explosion(get_global_mouse_position(), 50.0, -1.0)
+		var z = (get_global_mouse_position() / SQUARE_SIZE).round()
+		set_vertex(z.y, z.x, -0.1, true)
+		for chunk in $Chunks.get_children():
+			chunk.initalize_mesh()
+		
+		# Spawn character
+		#get_child(1).position = get_global_mouse_position()
+		#var pos = (get_global_mouse_position() / SQUARE_SIZE).round()
 #		print(pos)
-#		explosion(get_global_mouse_position(), 50.0, -1.0)
-#		var z = (get_global_mouse_position() / SQUARE_SIZE).round()
-#		set_vertex(z.y, z.x, -0.1, true)
-#		for chunk in $Chunks.get_children():
-#			chunk.initalize_mesh()
-	if(Input.is_action_just_pressed("debug_mouse2")):
+	
+	if(Input.is_action_pressed("debug_mouse2")):
 		explosion(get_global_mouse_position(), 50.0, 1.0)
-	update()
+	
+	queue_redraw()
+	#update()
 	#print(Engine.get_frames_per_second())
+
 
 func _draw() -> void:
 	draw_circle(get_global_mouse_position(), 50.0, Color(1.0, 1.0, 0.0, 0.3))
 	draw_circle((get_global_mouse_position() / SQUARE_SIZE).round() * SQUARE_SIZE, 5.0, Color(1.0, 0.0, 0.0, 0.4))
+	
 #	for i in range(0, v_chunks):
 #		for j in range(0, h_chunks):
 #			var z = Vector2(j + 1, i + 1) * CHUNK_SIZE * SQUARE_SIZE
@@ -48,11 +58,13 @@ func _draw() -> void:
 
 
 func _get_noise(noise_seed: int) -> Array:  #priv mark?
-	var noise := OpenSimplexNoise.new()
+	var noise := FastNoiseLite.new()
 	noise.seed = noise_seed
-	noise.octaves = 2
-	noise.persistence = 0.9
-	noise.period = 17.0
+	noise.noise_type = FastNoiseLite.TYPE_SIMPLEX
+	noise.fractal_gain = 2.0
+	noise.fractal_octaves = 3
+	noise.fractal_lacunarity = 2.5
+	
 	var n_max := 0.0
 	var n_avg := 0.0
 	for i in range(height):
@@ -71,13 +83,14 @@ func _get_noise(noise_seed: int) -> Array:  #priv mark?
 	
 	return data
 
+
 func generate_world(terrain_data: Array) -> void:
 	chunks.resize(v_chunks)
 	for i in range(v_chunks):
 		chunks[i] = []
 		chunks[i].resize(h_chunks)
 		for j in range(h_chunks):
-			chunks[i][j] = CHUNK.instance()
+			chunks[i][j] = CHUNK.instantiate()
 			chunks[i][j].set_size(CHUNK_SIZE, SQUARE_SIZE)
 			chunks[i][j].position = Vector2(j, i) * CHUNK_SIZE * SQUARE_SIZE
 			for k in range(CHUNK_SIZE + 1):
@@ -86,6 +99,7 @@ func generate_world(terrain_data: Array) -> void:
 			$Chunks.add_child(chunks[i][j])
 	for chunk in $Chunks.get_children():
 		chunk.initalize_mesh()
+
 
 func set_vertex(row: int, col: int, value: float, add: bool = false) -> void:
 	if row < 0 or col < 0 or row > height or col > width:
@@ -122,19 +136,19 @@ func set_vertex(row: int, col: int, value: float, add: bool = false) -> void:
 		chunk.vertices[0][0] = value
 		altered_chunks[chunk] = true
 
+
 func update_chunks(): #unoptimized debug function
 	for chunk in altered_chunks.keys():
 		chunk.initalize_mesh()
 	altered_chunks.clear()
-	
+
 
 func explosion(location: Vector2, radius: float, intensity: float) -> void:
 	radius /= SQUARE_SIZE
 	location /= SQUARE_SIZE
-	var cell_radius := ceil(radius) + 1
+	var cell_radius: int = ceil(radius) + 1
 	var current := location.round() - Vector2(cell_radius, cell_radius)
 	for i in range(cell_radius * 2):
 		for j in range(cell_radius * 2):
 			set_vertex(current.y + i, current.x + j, max(0.0, 1.0 - min(1.0, Vector2(current.x + j, current.y + i).distance_to(location) / radius)) * -intensity, true) #make this prettier
 	update_chunks()
-

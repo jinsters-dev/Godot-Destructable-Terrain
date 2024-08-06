@@ -88,14 +88,14 @@ func set_size(chunk_size: int, square_size: int) -> void:
 
 func initalize_mesh() -> void:
 	var square_count: int = chunk_size * chunk_size
-	var contour_flags: PoolByteArray
+	var contour_flags: PackedByteArray
 	contour_flags.resize(square_count)
-	var contour_mass_id: PoolByteArray
+	var contour_mass_id: PackedByteArray
 	contour_mass_id.resize(square_count)
 	var contour_midpoints: Dictionary
 	
-	var mesh_vertices: PoolVector2Array
-	var mesh_colors: PoolColorArray
+	var mesh_vertices: PackedVector2Array
+	var mesh_colors: PackedColorArray
 	
 	for i in range(chunk_size):
 		for j in range(chunk_size):
@@ -134,12 +134,12 @@ func initalize_mesh() -> void:
 			for midpoint in TRIANGLE_LOOKUP[case]:
 				var vertex: Vector2 = midpoints[midpoint] if midpoint >= 0 else (Vector2(j, i) + CONSTANT_LOOKUP[case][-midpoint - 1]) * square_size
 				mesh_vertices.append(vertex)
-				mesh_colors.append(Color.white)#Color(rand_range(0.0, 1.0), rand_range(0.0, 1.0), rand_range(0.0, 1.0)))
+				mesh_colors.append(Color.WHITE)#Color(randf_range(0.0, 1.0), randf_range(0.0, 1.0), randf_range(0.0, 1.0)))
 	
 	for child in $StaticBody2D.get_children():
 		child.free()
 	
-	if mesh_vertices.empty():
+	if mesh_vertices.is_empty():
 		$MeshInstance2D.hide()
 	else:
 		var arrays = []
@@ -235,7 +235,7 @@ func initalize_mesh() -> void:
 			masses.append([Vector2.ZERO, Vector2(chunk_size * square_size, 0.0), Vector2.ONE * chunk_size * square_size, Vector2(0.0, chunk_size * square_size)])
 			contour_mass_id[0] = masses.size() - 1
 			
-		if masses.empty():
+		if masses.is_empty():
 			empty_chunk = true
 		else:
 			var connections := []
@@ -251,7 +251,7 @@ func initalize_mesh() -> void:
 					var queue := [mass_coordinate]
 					var id = contour_mass_id[mass_coordinate]
 					contour_mass_id[mass_coordinate] = NO_MASS
-					while not queue.empty():
+					while not queue.is_empty():
 						var idx: int = queue.pop_front()
 						if contour_flags[idx] & CASE_MASK != 0b0000 and contour_mass_id[idx] != id:
 							if contour_mass_id[idx] != NO_MASS and connections.find([id, contour_mass_id[idx]]) == -1:
@@ -313,10 +313,10 @@ func initalize_mesh() -> void:
 				
 				valid_masses[connection[1]] = false
 				
-				masses[connection[0]] = PoolVector2Array(combined)
+				masses[connection[0]] = PackedVector2Array(combined)
 		
 			for i in range(masses.size()):
 				if valid_masses[i]:
 					var new_collision_shape = CollisionPolygon2D.new()
-					new_collision_shape.polygon = PoolVector2Array(masses[i])
+					new_collision_shape.polygon = PackedVector2Array(masses[i])
 					$StaticBody2D.add_child(new_collision_shape)
