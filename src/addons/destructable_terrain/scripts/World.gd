@@ -7,8 +7,9 @@ const SQUARE_SIZE := 16
 
 @export var height := 64
 @export var width := 64
-var v_chunks: int = ceil(float(height) / float(CHUNK_SIZE))
-var h_chunks: int = ceil(float(width) / float(CHUNK_SIZE))
+
+var v_chunks: int
+var h_chunks: int
 var chunks := []
 var altered_chunks := {}
 #FIX NOISE- AIR SHOULD ALWAYS BE ZERO, ROCK SHOULD ALWAYS BE 1 INSIDE
@@ -23,6 +24,7 @@ func _ready() -> void:
 	
 	get_tree().debug_collisions_hint = true
 	randomize()
+	set_world_size()
 	generate_world(_get_noise(randi()))
 
 
@@ -96,6 +98,11 @@ func _get_noise(noise_seed: int) -> Array:  #priv mark?
 			data[i].append(clamp(noise.get_noise_2d(j, i) / n_avg + 1.0, 0.0, 2.0) / 2.0)
 	
 	return data
+
+
+func set_world_size() -> void:
+	v_chunks = ceil(float(height) / float(CHUNK_SIZE))
+	h_chunks = ceil(float(width) / float(CHUNK_SIZE))
 
 
 func generate_world(terrain_data: Array) -> void:
