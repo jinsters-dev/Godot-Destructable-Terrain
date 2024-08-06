@@ -11,9 +11,13 @@ config_version=5
 [application]
 
 config/name="Destructable Terrain"
-run/main_scene="res://scenes/World.tscn"
+run/main_scene="res://addons/destructable_terrain/scenes/World.tscn"
 config/features=PackedStringArray("4.3")
 config/icon="res://icon.png"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/destructable_terrain/plugin.cfg")
 
 [input]
 
