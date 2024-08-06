@@ -1,6 +1,7 @@
 extends Node2D
 
 const CHUNK := preload("res://addons/destructable_terrain/scenes/Chunk.tscn")
+const PLAYER := preload("res://addons/destructable_terrain/scenes/Player.tscn")
 const CHUNK_SIZE := 8
 const SQUARE_SIZE := 16
 
@@ -16,9 +17,9 @@ var altered_chunks := {}
 func _ready() -> void:
 	# Create an empty node to hold the chunks, if it doesn't already exist
 	if get_node_or_null("Chunks") == null:
-		var chunks: Node = Node.new()
-		chunks.name = "Chunks"
-		add_child(chunks)
+		var node := Node.new()
+		node.name = "Chunks"
+		add_child(node)
 	
 	get_tree().debug_collisions_hint = true
 	randomize()
@@ -33,17 +34,24 @@ func _process(delta_time: float) -> void:
 		set_vertex(z.y, z.x, -0.1, true)
 		for chunk in $Chunks.get_children():
 			chunk.initalize_mesh()
-		
-		# Spawn character
-		#get_child(1).position = get_global_mouse_position()
-		#var pos = (get_global_mouse_position() / SQUARE_SIZE).round()
-#		print(pos)
 	
 	if(Input.is_action_pressed("debug_mouse2")):
+		# Remove terrain
 		explosion(get_global_mouse_position(), 50.0, 1.0)
 	
+	if(Input.is_action_pressed("debug_mouse3")):
+		# Spawn player
+		var player := get_node_or_null("Player")
+		if player == null:
+			player = PLAYER.instantiate()
+			player.name = "Player"
+			add_child(player)
+		
+		player.position = get_global_mouse_position()
+		#var pos = (get_global_mouse_position() / SQUARE_SIZE).round()
+		#print(pos)
+	
 	queue_redraw()
-	#update()
 	#print(Engine.get_frames_per_second())
 
 

@@ -4,7 +4,7 @@ extends EditorPlugin
 
 func _enter_tree() -> void:
 	add_custom_type(
-		"Destructable Terrain",
+		"DestructableTerrain",
 		"Node2D",
 		preload("res://addons/destructable_terrain/scripts/World.gd"),
 		preload("res://addons/destructable_terrain/icon.svg")
@@ -12,4 +12,4 @@ func _enter_tree() -> void:
 
 
 func _exit_tree() -> void:
-	remove_custom_type("Destructable Terrain")
+	remove_custom_type("DestructableTerrain")
