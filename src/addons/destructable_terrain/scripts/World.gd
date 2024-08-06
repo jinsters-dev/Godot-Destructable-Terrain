@@ -14,6 +14,12 @@ var altered_chunks := {}
 
 
 func _ready() -> void:
+	# Create an empty node to hold the chunks, if it doesn't already exist
+	if get_node_or_null("Chunks") == null:
+		var chunks: Node = Node.new()
+		chunks.name = "Chunks"
+		add_child(chunks)
+	
 	get_tree().debug_collisions_hint = true
 	randomize()
 	generate_world(_get_noise(randi()))
@@ -21,7 +27,7 @@ func _ready() -> void:
 
 func _process(delta_time: float) -> void:
 	if(Input.is_action_pressed("debug_mouse")):
-		# Add chunks
+		# Add terrain
 		explosion(get_global_mouse_position(), 50.0, -1.0)
 		var z = (get_global_mouse_position() / SQUARE_SIZE).round()
 		set_vertex(z.y, z.x, -0.1, true)
