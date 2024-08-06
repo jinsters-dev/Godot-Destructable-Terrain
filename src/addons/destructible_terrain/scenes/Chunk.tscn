@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bn5jx0jei2r63"]
 
-[ext_resource type="Script" path="res://addons/destructable_terrain/scripts/Chunk.gd" id="1"]
+[ext_resource type="Script" path="res://addons/destructible_terrain/scripts/Chunk.gd" id="1"]
 
 [node name="Chunk" type="Node2D"]
 script = ExtResource("1")

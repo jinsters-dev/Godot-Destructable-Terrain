@@ -1,7 +1,7 @@
 extends Node2D
 
-const CHUNK := preload("res://addons/destructable_terrain/scenes/Chunk.tscn")
-const PLAYER := preload("res://addons/destructable_terrain/scenes/Player.tscn")
+const CHUNK := preload("res://addons/destructible_terrain/scenes/Chunk.tscn")
+const PLAYER := preload("res://addons/destructible_terrain/scenes/Player.tscn")
 const CHUNK_SIZE := 8
 const SQUARE_SIZE := 16
 

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d1yxea8oyeoi6"
-path="res://.godot/imported/icon.svg-772002234424c1fb75145660d385b384.ctex"
+path="res://.godot/imported/icon.svg-86f73ab39cd176faf5e01b2f67359c5f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/destructable_terrain/icon.svg"
-dest_files=["res://.godot/imported/icon.svg-772002234424c1fb75145660d385b384.ctex"]
+source_file="res://addons/destructible_terrain/icon.svg"
+dest_files=["res://.godot/imported/icon.svg-86f73ab39cd176faf5e01b2f67359c5f.ctex"]
 
 [params]
 

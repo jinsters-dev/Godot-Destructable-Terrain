@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://y80t8syalp5"]
 
-[ext_resource type="Script" path="res://addons/destructable_terrain/scripts/World.gd" id="1"]
-[ext_resource type="PackedScene" uid="uid://dh24ih074i60c" path="res://addons/destructable_terrain/scenes/Player.tscn" id="2"]
+[ext_resource type="Script" path="res://addons/destructible_terrain/scripts/World.gd" id="1"]
+[ext_resource type="PackedScene" path="res://addons/destructible_terrain/scenes/Player.tscn" id="2"]
 
 [node name="World" type="Node2D"]
 script = ExtResource("1")
