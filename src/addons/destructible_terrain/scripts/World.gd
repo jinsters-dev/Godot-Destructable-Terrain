@@ -5,8 +5,13 @@ const PLAYER := preload("res://addons/destructible_terrain/scenes/Player.tscn")
 const CHUNK_SIZE := 8
 const SQUARE_SIZE := 16
 
+@export_group("Size")
 @export var height := 64
 @export var width := 64
+
+@export_group("Brush")
+@export var brush_radius := 50.0
+@export var brush_intensity := 1.0
 
 var v_chunks: int
 var h_chunks: int
@@ -28,18 +33,14 @@ func _ready() -> void:
 	generate_world(_get_noise(randi()))
 
 
-func _process(delta_time: float) -> void:
+func _input(event: InputEvent) -> void:
 	if(Input.is_action_pressed("debug_mouse")):
 		# Add terrain
-		explosion(get_global_mouse_position(), 50.0, -1.0)
-		var z = (get_global_mouse_position() / SQUARE_SIZE).round()
-		set_vertex(z.y, z.x, -0.1, true)
-		for chunk in $Chunks.get_children():
-			chunk.initalize_mesh()
+		explosion(get_global_mouse_position(), brush_radius, -brush_intensity)
 	
 	if(Input.is_action_pressed("debug_mouse2")):
 		# Remove terrain
-		explosion(get_global_mouse_position(), 50.0, 1.0)
+		explosion(get_global_mouse_position(), brush_radius, brush_intensity)
 	
 	if(Input.is_action_pressed("debug_mouse3")):
 		# Spawn player
@@ -50,11 +51,8 @@ func _process(delta_time: float) -> void:
 			add_child(player)
 		
 		player.position = get_global_mouse_position()
-		#var pos = (get_global_mouse_position() / SQUARE_SIZE).round()
-		#print(pos)
 	
 	queue_redraw()
-	#print(Engine.get_frames_per_second())
 
 
 func _draw() -> void:
